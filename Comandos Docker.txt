@@ -1,0 +1,139 @@
+Guia Completo de Comandos – Docker + SQL Server no Ubuntu
+
+==================================== 1. INSTALAÇÃO DO DOCKER
+====================================
+
+Atualizar pacotes: sudo apt update
+
+Instalar docker: sudo apt install docker.io -y
+
+Iniciar serviço: sudo systemctl start docker
+
+Habilitar no boot: sudo systemctl enable docker
+
+Verificar versão: docker –version
+
+Testar instalação: sudo docker run hello-world
+
+==================================== 2. PERMISSÕES E ACESSO
+====================================
+
+Executar comando como administrador: sudo comando
+
+Adicionar usuário ao grupo docker (evita usar sudo): sudo usermod -aG
+docker $USER
+
+Aplicar mudança sem reiniciar: newgrp docker
+
+Se aparecer erro de permissão: permission denied while trying to connect
+to the Docker daemon
+
+==================================== 3. COMANDOS BÁSICOS DOCKER
+====================================
+
+Ver imagens locais: docker images
+
+Baixar imagem: docker pull nome_da_imagem
+
+Exemplo SQL Server: docker pull
+mcr.microsoft.com/mssql/server:2022-latest
+
+Remover imagem: docker rmi nome_da_imagem
+
+Remover imagem forçando: docker rmi -f nome_da_imagem
+
+Listar containers rodando: docker ps
+
+Listar TODOS containers: docker ps -a
+
+==================================== 4. CRIAR E GERENCIAR CONTAINERS
+====================================
+
+Criar container: docker run -d –name nome_container imagem
+
+Parar container: docker stop nome_container
+
+Iniciar container parado: docker start nome_container
+
+Reiniciar container: docker restart nome_container
+
+Remover container: docker rm nome_container
+
+Remover container forçando: docker rm -f nome_container
+
+==================================== 5. MONITORAMENTO E DEBUG
+====================================
+
+Ver logs: docker logs nome_container
+
+Ver processos rodando: docker top nome_container
+
+Entrar no terminal do container: docker exec -it nome_container bash
+
+Entrar como root: docker exec -u root -it nome_container bash
+
+==================================== 6. LIMPEZA DO DOCKER
+====================================
+
+Parar todos containers: docker stop $(docker ps -q)
+
+Remover todos containers: docker rm $(docker ps -a -q)
+
+Remover imagens não usadas: docker image prune
+
+Limpar tudo: docker system prune -a
+
+Limpeza completa incluindo volumes: docker system prune -a –volumes
+
+==================================== 7. RODANDO SQL SERVER NO DOCKER
+====================================
+
+Baixar imagem: docker pull mcr.microsoft.com/mssql/server:2022-latest
+
+Criar container SQL Server:
+
+docker run -e “ACCEPT_EULA=Y” -e “SA_PASSWORD=SuaSenhaForte123!” -p
+1433:1433 –name sqlserver -d mcr.microsoft.com/mssql/server:2022-latest
+
+Explicação: ACCEPT_EULA = aceita termos da Microsoft SA_PASSWORD = senha
+do usuário administrador 1433 = porta padrão do SQL Server
+
+==================================== 8. VERIFICAR CONTAINER SQL SERVER
+====================================
+
+docker ps
+
+Ver logs do banco: docker logs sqlserver
+
+==================================== 9. CONECTAR NO SQL SERVER
+====================================
+
+Entrar no container: docker exec -it sqlserver bash
+
+Abrir cliente SQL: /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P
+“SuaSenhaForte123!”
+
+==================================== 10. COMANDOS SQL BÁSICOS
+====================================
+
+Ver bancos: SELECT name FROM sys.databases; GO
+
+Criar banco: CREATE DATABASE TesteDB; GO
+
+Usar banco: USE TesteDB; GO
+
+Criar tabela: CREATE TABLE Pessoas ( Id INT PRIMARY KEY, Nome
+NVARCHAR(100) ); GO
+
+Inserir dados: INSERT INTO Pessoas VALUES (1, ‘Gustavo’); GO
+
+Consultar dados: SELECT * FROM Pessoas; GO
+
+==================================== 11. PARAR E REMOVER SQL SERVER
+====================================
+
+Parar container: docker stop sqlserver
+
+Remover container: docker rm sqlserver
+
+Remover imagem: docker rmi mcr.microsoft.com/mssql/server:2022-latest
